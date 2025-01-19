@@ -99,7 +99,7 @@ ludus_ad_vulns_set_acl: false
     roles:
       - ludus-ad-vulns
     role_vars:
-
+      ludus_ad_vulns_openshares: true
       ludus_ad_vulns_kerberoasting: true
       kerberoasting_users:
       - identity: fives

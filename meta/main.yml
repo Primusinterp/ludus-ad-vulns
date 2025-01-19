@@ -2,9 +2,9 @@
 dependencies: []
 
 galaxy_info:
-  role_name: ludus-install-linux-tools
+  role_name: ludus-ad-vulns
   author: primusinterp
-  description: Install different tools for a dev linux machine
+  description: An Ansible Role that adds vulnerabilities in an Active Directory.
   company: primus
   license: GPLv3
   min_ansible_version: "2.10"
