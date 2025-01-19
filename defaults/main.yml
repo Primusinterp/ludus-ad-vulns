@@ -1,0 +1,15 @@
+---
+#Vulns
+ludus_ad_vulns_openshares: false
+ludus_ad_vulns_kerberoasting: false
+ludus_ad_vulns_unconstrained_delegation_user: false
+ludus_ad_vulns_set_acl: false
+
+
+
+
+#Login Data
+ludus_domain_val: "{{ (ludus | selectattr('vm_name', 'match', inventory_hostname))[0].domain.fqdn.split('.')[0] }}"
+
+ludus_AD_domain_admin: "{{ ludus_domain_val }}\\{{ defaults.ad_domain_admin }}"
+ludus_AD_domain_admin_password: "{{ defaults.ad_domain_admin_password }}"

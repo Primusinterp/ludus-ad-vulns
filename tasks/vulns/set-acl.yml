@@ -1,0 +1,79 @@
+#Credit to https://github.com/Mayfly277 for inspiration
+- name: Set ACL for Active Directory objects
+  ansible.windows.win_powershell:
+    script: |
+        [CmdletBinding()]
+        param (
+            [String] $for,
+            [String] $to,
+            [String] $right,
+            [String] $inheritance
+        )
+
+        Import-Module ActiveDirectory
+        Set-Location AD:
+
+        # Resolve target object (supports both SamAccountName and DistinguishedName)
+        if ($to -match "^(CN|OU|DC)=") {
+            # Input is a Distinguished Name
+            $adObject = Get-ADObject -LDAPFilter "(distinguishedName=$to)" -Properties DistinguishedName
+        } else {
+            # Input is a SamAccountName
+            $adObject = Get-ADObject -Filter "SamAccountName -eq '$to'" -Properties DistinguishedName
+        }
+
+        # Check if the object was resolved
+        if ($null -eq $adObject) {
+            Write-Error "Target object '$to' not found in Active Directory."
+            throw
+        }
+        $objOU = $adObject.DistinguishedName
+        $objAcl = Get-Acl -Path "AD:$objOU"
+
+        # Resolve principal SID
+        $principalObject = Get-ADObject -Filter "SamAccountName -eq '$for'" -Properties ObjectSID
+        if ($null -eq $principalObject) {
+            Write-Error "Principal '$for' not found in Active Directory."
+            throw
+        }
+        $forSID = [System.Security.Principal.SecurityIdentifier]($principalObject.ObjectSID)
+
+        # Apply access rule
+        $type = [System.Security.AccessControl.AccessControlType] 'Allow'
+        $inheritanceType = [System.DirectoryServices.ActiveDirectorySecurityInheritance] $inheritance
+
+        if ('AccessSystemSecurity', 'GenericAll', 'GenericWrite', 'ReadProperty', 'WriteProperty' -contains $right) {
+            $adRight = [System.DirectoryServices.ActiveDirectoryRights] $right
+            $ace = New-Object System.DirectoryServices.ActiveDirectoryAccessRule $forSID, $adRight, $type, $inheritanceType
+        } else {
+            Write-Error "Invalid or unsupported right '$right'."
+            throw
+        }
+
+        if ($ace) {
+            $objAcl.AddAccessRule($ace)
+            Set-Acl -AclObject $objAcl -Path "AD:$objOU"
+            Write-Host "Successfully set ACL for $for on $to with rights $right."
+        }
+    error_action: stop
+    parameters:
+      for: "{{ acl.value.for }}"
+      to: "{{ acl.value.to }}"
+      right: "{{ acl.value.right }}"
+      inheritance: "{{ acl.value.inheritance }}"
+  loop: "{{ acl_definitions | dict2items }}"
+  loop_control:
+    loop_var: acl
+
+
+- name: Adding ACL Rule
+  debug:
+    msg:
+      - "Applying ACL: {{ acl.key }}"
+      - "For: {{ acl.value.for }}"
+      - "To: {{ acl.value.to }}"
+      - "Right: {{ acl.value.right }}"
+      - "Inheritance: {{ acl.value.inheritance }}"
+  loop: "{{ acl_definitions | dict2items }}"
+  loop_control:
+    loop_var: acl

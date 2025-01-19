@@ -1,0 +1,13 @@
+- name: Make user kerberoastable by setting SPN
+  ansible.windows.win_powershell:
+    script: |
+        Set-ADUser -Identity "{{ user.identity }}" -ServicePrincipalNames @{Add="{{ user.service_principal_name }}"}
+    error_action: stop
+  loop: "{{ kerberoasting_users }}"
+  loop_control:
+    loop_var: user
+  vars:
+    ansible_become: yes
+    ansible_become_method: runas
+    ansible_become_user: "{{ ludus_AD_domain_admin }}"
+    ansible_become_password: "{{ ludus_AD_domain_admin_password }}"

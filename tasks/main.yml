@@ -1,0 +1,25 @@
+
+- name: Vulnerabilities variables
+  debug:
+    msg:
+      - "ludus_ad_vulns_openshares: {{ ludus_ad_vulns_openshares }}"
+      - "ludus_ad_vulns_kerberoasting: {{ ludus_ad_vulns_kerberoasting }}"
+      - "ludus_ad_vulns_unconstrained_delegation_user: {{ ludus_ad_vulns_unconstrained_delegation_user }}"
+      - "ludus_ad_vulns_set_acl: {{ludus_ad_vulns_set_acl}}"
+
+- name: Set up open network shares
+  include_tasks: vulns/shares.yml
+  when: ludus_ad_vulns_openshares is true
+
+
+- name: Make user kerberoastable by setting SPN
+  include_tasks: vulns/kerberoasting.yml
+  when: ludus_ad_vulns_kerberoasting is true
+
+- name: Set unconstrained delegation for a specific user
+  include_tasks: vulns/unconstrained_delegation_user.yml
+  when: ludus_ad_vulns_kerberoasting is true
+
+- name: Set ACL for AD object
+  include_tasks: vulns/set-acl.yml
+  when: ludus_ad_vulns_set_acl is true
