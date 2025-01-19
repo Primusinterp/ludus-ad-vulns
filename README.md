@@ -10,6 +10,7 @@ The role can add the following vulnerabilities:
 - Set unconstrained delegation for a user
 - Add open network shares
 
+I plan to add more vulnerabilities to this role, as they become needed on my ranges. 
 ---
 
 ## Requirements
