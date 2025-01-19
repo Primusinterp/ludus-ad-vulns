@@ -11,6 +11,7 @@ The role can add the following vulnerabilities:
 - Add open network shares
 
 I plan to add more vulnerabilities to this role, as they become needed on my ranges. 
+
 ---
 
 ## Requirements
