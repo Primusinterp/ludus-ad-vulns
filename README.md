@@ -49,6 +49,13 @@ user.identity: cody
 ```
 
 ---
+### Variables used when configuring a machine for unconstrained delegation:
+
+```yaml
+# machine name for the system that you will add unconstrained delegation to
+machine_name: maldev-srv1-2022
+```
+
 
 ### Variables used when configuring ACLs for AD objects:
 
@@ -79,6 +86,8 @@ ludus_ad_vulns_openshares: false
 ludus_ad_vulns_kerberoasting: false
 ludus_ad_vulns_unconstrained_delegation_user: false
 ludus_ad_vulns_set_acl: false
+ludus_ad_vulns_unconstrained_delegation_machine: false
+
 ```
 
 
@@ -118,6 +127,9 @@ ludus_ad_vulns_set_acl: false
           to: "CN=Bounty Hunters,OU=Bounty Hunters,DC=maldev,DC=local"
           right: "GenericAll"
           inheritance: "None"   
+      ludus_ad_vulns_unconstrained_delegation_machine: true
+      unconstrained_delegation_machine:
+      - machine_name: maldev-srv1-2022
 ```
 
 ## License
