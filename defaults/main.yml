@@ -4,6 +4,7 @@ ludus_ad_vulns_openshares: false
 ludus_ad_vulns_kerberoasting: false
 ludus_ad_vulns_unconstrained_delegation_user: false
 ludus_ad_vulns_set_acl: false
+ludus_ad_vulns_unconstrained_delegation_machine: false
 
 
 

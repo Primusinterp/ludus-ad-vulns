@@ -1,0 +1,13 @@
+- name: Set unconstrained delegation for a specific user
+  ansible.windows.win_powershell:
+    script: |
+        Get-ADComputer -Identity {{computer.machine_name}} | Set-ADAccountControl ‑TrustedForDelegation $true
+    error_action: stop
+    parameters:
+      domain_username: "{{ ludus_AD_domain_admin }}"
+      domain_password: "{{ ludus_AD_domain_admin_password }}"
+  loop: "{{ unconstrained_delegation_machine }}"
+  loop_control:
+    loop_var: computer
+
+

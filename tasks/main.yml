@@ -18,8 +18,13 @@
 
 - name: Set unconstrained delegation for a specific user
   include_tasks: vulns/unconstrained_delegation_user.yml
-  when: ludus_ad_vulns_kerberoasting is true
+  when: ludus_ad_vulns_unconstrained_delegation_user is true
+
+- name: Set unconstrained delegation for a specific machine
+  include_tasks: vulns/unconstrained_delegation_machine.yml
+  when: unconstrained_delegation_machine is true
 
 - name: Set ACL for AD object
   include_tasks: vulns/set-acl.yml
   when: ludus_ad_vulns_set_acl is true
+
